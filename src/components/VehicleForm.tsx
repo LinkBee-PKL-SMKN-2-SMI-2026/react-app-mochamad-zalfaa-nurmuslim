@@ -1,29 +1,68 @@
-import { useForm } from "react-hook-form";
+import axios from "axios";
+import { useState } from "react";
+import { useForm } from "react-hook-form"
+import type { SubmitHandler } from "react-hook-form";
 
-interface VehicleFormData {
+interface VehicleFormInputs {
   name: string;
   brand: string;
   plateNumber: string;
   transmission: string;
-  category: string;
+  categoryId: string;
 }
 
 interface VehicleFormProps {
-  onAddVehicle: (vehicle: VehicleFormData) => void;
+  onSuccess: () => void;
 }
 
 export default function VehicleForm({
-  onAddVehicle,
+  onSuccess,
 }: VehicleFormProps) {
   const {
     register,
     handleSubmit,
     reset,
-  } = useForm<VehicleFormData>();
+  } = useForm<VehicleFormInputs>();
 
-  const onSubmit = (data: VehicleFormData) => {
-    onAddVehicle(data);
-    reset();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Token Dummy
+
+  // Ganti dengan token ADMIN yang kamu dapat dari token.html
+
+  const TEMP_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5ODc0NmQyMC1lZTZjLTQzMjUtYWEwOC1lYzg2N2IxODM0ZmUiLCJlbWFpbCI6ImFkbWluQHJlbnRjYXIuY29tIiwiaWF0IjoxNzg3NDY5NDAxLCJleHAiOjE3ODc0NzAzMDF9.Nn0IhTcDgDfPaQEw8MLqvrGdepNxmXWDtZDX7-O9maY";
+
+  const onSubmit: SubmitHandler<VehicleFormInputs> = async (data) => {
+    try {
+      setIsSubmitting(true);
+
+      await axios.post(
+        "https://rent-car-pkl.linkbee.id/api/vehicles",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${TEMP_TOKEN}`,
+          },
+        }
+      );
+
+      alert("Berhasil menambah kendaraan!");
+
+      reset();
+
+      // Memanggil fetchVehicles() dari App.tsx
+
+      onSuccess();
+    } catch (error: any) {
+      console.error("Gagal menyimpan:", error);
+
+      alert(
+        error.response?.data?.message ||
+          "Terjadi kesalahan sistem"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -35,7 +74,7 @@ export default function VehicleForm({
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
-      >
+      >   
         {}
         <div>
           <label className="block mb-1 font-semibold">
@@ -43,13 +82,16 @@ export default function VehicleForm({
           </label>
 
           <input
-            {...register("name")}
+            {...register("name", {
+              required: "Nama kendaraan wajib diisi",
+            })}
             type="text"
             placeholder="Contoh: Avanza"
             className="w-full border rounded p-2"
           />
         </div>
 
+        
         {}
         <div>
           <label className="block mb-1 font-semibold">
@@ -64,6 +106,7 @@ export default function VehicleForm({
           />
         </div>
 
+           
         {}
         <div>
           <label className="block mb-1 font-semibold">
@@ -71,13 +114,15 @@ export default function VehicleForm({
           </label>
 
           <input
-            {...register("plateNumber")}
+            {...register("plateNumber", {
+              required: "Nomor plat wajib diisi",
+            })}
             type="text"
             placeholder="Contoh: B 1234 ABC"
             className="w-full border rounded p-2"
           />
         </div>
-
+           
         {}
         <div>
           <label className="block mb-1 font-semibold">
@@ -102,27 +147,41 @@ export default function VehicleForm({
           </select>
         </div>
 
+           
         {}
         <div>
           <label className="block mb-1 font-semibold">
             Kategori
           </label>
 
-          <input
-            {...register("category")}
-            type="text"
-            placeholder="Contoh: MPV"
-            className="w-full border rounded p-2"
-          />
+         <select {...register("categoryId", { required: true })}>
+          <option value="">Pilih kategori</option>
+            <option value="7fdb7fdb-4a93-4c78-858b-32c6457aa15b">
+            Sedan
+            </option>
+              <option value="38c39f36-bc42-4d60-b33e-63c31be26320">
+              MPV
+              </option>
+                <option value="04cc14b0-6964-497a-b30f-57e37f5c26d6">
+                SUV
+                </option>
+                  <option value="239c63b2-a2e8-41cf-ad50-d0dd2fc44ed8">
+                  Pickup
+                  </option>
+          </select>
         </div>
 
+           
         {}
         <div className="md:col-span-2">
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            disabled={isSubmitting}
+            className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
           >
-            Tambah Kendaraan
+            {isSubmitting
+              ? "Menyimpan..."
+              : "Tambah Kendaraan"}
           </button>
         </div>
       </form>

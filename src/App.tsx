@@ -4,7 +4,6 @@ import axios from "axios";
 import VehicleCard from "./components/VehicleCard";
 import VehicleForm from "./components/VehicleForm";
 
-
 interface Category {
   id: string;
   name: string;
@@ -20,66 +19,39 @@ interface Vehicle {
 }
 
 export default function App() {
-
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  
-  useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        setIsLoading(true);
+  // GET data kendaraan
+  // Sengaja dibuat di luar useEffect
+  // supaya bisa dipanggil ulang setelah POST / DELETE
+  const fetchVehicles = async () => {
+    try {
+      setIsLoading(true);
 
-        
-        const response = await axios.get(
-          "https://rent-car-pkl.linkbee.id/api/vehicles"
-        );
+      const response = await axios.get(
+        "https://rent-car-pkl.linkbee.id/api/vehicles"
+      );
 
-        
-        setVehicles(response.data.data);
-        setError(null);
-      } catch (err) {
-        console.error("Gagal mengambil data:", err);
+      setVehicles(response.data.data);
+      setError(null);
+    } catch (err) {
+      console.error("Gagal mengambil data:", err);
 
-        setError(
-          "Gagal memuat data dari server. Pastikan internet jalan."
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchVehicles();
-  }, []); 
-
-  
-  const handleAddVehicle = (vehicleData: {
-    name: string;
-    brand: string;
-    plateNumber: string;
-    transmission: string;
-    category: string;
-  }) => {
-    const newVehicle: Vehicle = {
-      id: crypto.randomUUID(),
-      name: vehicleData.name,
-      brand: vehicleData.brand,
-      plateNumber: vehicleData.plateNumber,
-      transmission: vehicleData.transmission,
-      category: {
-        id: crypto.randomUUID(),
-        name: vehicleData.category,
-      },
-    };
-
-    setVehicles((prevVehicles) => [
-      ...prevVehicles,
-      newVehicle,
-    ]);
+      setError(
+        "Gagal memuat data dari server. Pastikan internet jalan."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  
+  // Jalankan GET pertama kali saat aplikasi dibuka
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
+
   if (isLoading) {
     return (
       <div className="p-8 text-center text-blue-500 font-bold">
@@ -99,20 +71,23 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">
-        Katalog Kendaraan Rent Car
+        Rent Car Marifa
       </h1>
 
-      {}
+      {/* Form Tambah Kendaraan */}
       <div className="mb-8">
-        <VehicleForm onAddVehicle={handleAddVehicle} />
+        <VehicleForm
+          onSuccess={fetchVehicles}
+        />
       </div>
 
-      {}
+      {/* List Kendaraan */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {vehicles.map((vehicle) => (
           <VehicleCard
             key={vehicle.id}
             vehicle={vehicle}
+            onDeleteSuccess={fetchVehicles}
           />
         ))}
       </div>
