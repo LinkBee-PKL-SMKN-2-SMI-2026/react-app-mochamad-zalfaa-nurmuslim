@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 import VehicleCard from "../components/VehicleCard";
@@ -22,7 +22,7 @@ export default function VehicleList() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchVehicles = async () => {
+  const fetchVehicles = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -41,15 +41,15 @@ export default function VehicleList() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchVehicles();
-  }, []);
+  }, [fetchVehicles]);
 
   if (isLoading) {
     return (
-      <div className="p-8 text-center text-blue-500 font-bold">
+      <div className="p-8 text-center font-bold text-blue-500">
         Memuat Data Kendaraan...
       </div>
     );
