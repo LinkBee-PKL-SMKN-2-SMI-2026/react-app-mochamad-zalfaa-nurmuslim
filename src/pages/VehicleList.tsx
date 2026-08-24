@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../utils/api";
-// import { useCallback, useEffect, useState } from "react";
-// import axios from "axios";
-// import VehicleCard from "../components/VehicleCard";
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import VehicleCard from "../components/VehicleCard";
 
 interface Category {
   id: string;

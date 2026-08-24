@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -43,7 +43,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-center text-3xl font-bold">
+        <h1 className="mb-2 text-center text-3xl font-bold">
           Rent Car Mariza
         </h1>
 
@@ -55,6 +55,7 @@ export default function LoginPage() {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4"
         >
+          {/* Email */}
           <div>
             <label className="mb-1 block font-semibold">
               Email
@@ -65,7 +66,7 @@ export default function LoginPage() {
                 required: "Email wajib diisi",
               })}
               type="email"
-              placeholder="admin@rentcar.com"
+              placeholder="Masukkan email"
               className="w-full rounded border p-2"
             />
 
@@ -76,6 +77,7 @@ export default function LoginPage() {
             )}
           </div>
 
+          {/* Password */}
           <div>
             <label className="mb-1 block font-semibold">
               Password
@@ -97,6 +99,7 @@ export default function LoginPage() {
             )}
           </div>
 
+          {/* Login Button */}
           <button
             type="submit"
             disabled={isSubmitting}
@@ -105,6 +108,18 @@ export default function LoginPage() {
             {isSubmitting ? "Login..." : "Login"}
           </button>
         </form>
+
+        {/* Register */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Belum punya akun? <Link
+            to="/register"
+            className="mt-1 inline-block font-semibold text-blue-500 hover:underline"
+          >
+            Daftar sekarang
+          </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
