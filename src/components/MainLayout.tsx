@@ -5,7 +5,7 @@ export default function MainLayout() {
     <div className="min-h-screen bg-gray-100">
       <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-900 p-6 text-white">
         <h1 className="mb-8 text-xl font-bold">
-          Rent Car Marifa
+          Rent Car Mariza
         </h1>
 
         <nav>
